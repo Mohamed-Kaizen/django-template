@@ -24,6 +24,8 @@ ALLOWED_HOSTS = config("ALLOWED_HOSTS", cast=Csv(str))
 
 SITE_ID = 1
 
+DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
 # URLS
 # ------------------------------------------------------------------------------
 # https://docs.djangoproject.com/en/dev/ref/settings/#root-urlconf
@@ -45,18 +47,10 @@ DJANGO_APPS = [
     "django.contrib.sites",
 ]
 THIRD_PARTY_APPS = [
-    "rest_framework",
     "axes",
     "import_export",
-    "corsheaders",
     "storages",
-    "drf_yasg",
     "django_filters",
-    "allauth",
-    "allauth.account",
-    "allauth.socialaccount",
-    "dj_rest_auth.registration",
-    "dj_rest_auth",
 ]
 
 LOCAL_APPS = ["users.apps.UsersConfig"]
@@ -68,7 +62,6 @@ INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + LOCAL_APPS
 # ------------------------------------------------------------------------------
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
-    "corsheaders.middleware.CorsMiddleware",  # django-cors-headers
     "whitenoise.middleware.WhiteNoiseMiddleware",  # whitenoise
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.locale.LocaleMiddleware",
@@ -86,7 +79,6 @@ MIDDLEWARE = [
 AUTHENTICATION_BACKENDS = (
     "axes.backends.AxesBackend",
     "django.contrib.auth.backends.ModelBackend",
-    "allauth.account.auth_backends.AuthenticationBackend",
 )
 
 # https://docs.djangoproject.com/en/dev/ref/settings/#auth-user-model
@@ -260,17 +252,6 @@ DATABASES = {
 }
 
 # Third-Party Settings
-# djangorestframework
-# ------------------------------------------------------------------------------
-REST_FRAMEWORK = {
-    "DEFAULT_AUTHENTICATION_CLASSES": (
-        "rest_framework.authentication.SessionAuthentication",
-        "dj_rest_auth.utils.JWTCookieAuthentication",
-    ),
-    "DEFAULT_PERMISSION_CLASSES": ("rest_framework.permissions.AllowAny",),
-    "DEFAULT_PAGINATION_CLASS": "rest_framework.pagination.PageNumberPagination",
-}
-
 # whitenoise
 # ------------------------------------------------------------------------------
 if DEBUG:
@@ -291,6 +272,7 @@ if DEBUG:
 
     # displaying panels for django debug
     DEBUG_TOOLBAR_PANELS = [
+        "debug_toolbar.panels.history.HistoryPanel",
         "debug_toolbar.panels.versions.VersionsPanel",
         "debug_toolbar.panels.timer.TimerPanel",
         "debug_toolbar.panels.settings.SettingsPanel",
@@ -312,12 +294,6 @@ AXES_COOLOFF_TIME = timedelta(minutes=60) if not DEBUG else timedelta(minutes=5)
 AXES_FAILURE_LIMIT = 5
 AXES_USE_USER_AGENT = True
 
-# django-cors-headers
-# ------------------------------------------------------------------------------
-# https://github.com/adamchainz/django-cors-headers#cors_origin_allow_all
-# Todo: Change this in production
-CORS_ORIGIN_ALLOW_ALL = True
-
 # django-storages
 # ------------------------------------------------------------------------------
 if not DEBUG:
@@ -326,34 +302,6 @@ if not DEBUG:
     DROPBOX_OAUTH2_TOKEN = config("DROPBOX_OAUTH2_TOKEN", cast=str)
 
     DROPBOX_ROOT_PATH = "media"
-
-# djangorestframework-simplejwt
-# ------------------------------------------------------------------------------
-SIMPLE_JWT = {
-    "USER_ID_FIELD": "uuid",
-}
-
-# dj-rest-auth
-# ------------------------------------------------------------------------------
-REST_USE_JWT = True
-
-ACCOUNT_AUTHENTICATION_METHOD = "username_email"
-
-ACCOUNT_EMAIL_REQUIRED = True
-
-REST_AUTH_SERIALIZERS = {
-    "USER_DETAILS_SERIALIZER": "users.serializers.UserDetailsSerializer",
-    "JWT_SERIALIZER": "users.serializers.JWTSerializer",
-}
-
-REST_AUTH_REGISTER_SERIALIZERS = {
-    "REGISTER_SERIALIZER": "users.serializers.CustomRegisterSerializer",
-}
-ACCOUNT_ADAPTER = "users.adapter.CustomAccountAdapter"
-
-OLD_PASSWORD_FIELD_ENABLED = True
-
-LOGOUT_ON_PASSWORD_CHANGE = True
 
 # Your settings...
 # ------------------------------------------------------------------------------

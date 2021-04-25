@@ -1,7 +1,6 @@
 """Collection of forms."""
 from typing import Any
 
-from django import forms
 from django.contrib.auth.forms import UserChangeForm, UserCreationForm
 from django.core.exceptions import ValidationError
 
@@ -13,10 +12,16 @@ from .validators import (
 )
 
 
-class UserAdminForm(forms.ModelForm):
-    """Custom form for users form in admin page."""
+class CustomUserCreationForm(UserCreationForm):
+    """Custom form for users creation form in admin page."""
 
-    def clean_username(self: "UserAdminForm") -> Any:
+    class Meta:
+        """Meta data."""
+
+        model = CustomUser
+        fields = ("username", "password")
+
+    def clean_username(self: "CustomUserCreationForm") -> Any:
         """Extra validation for username."""
         username = self.data.get("username")
 
@@ -26,29 +31,18 @@ class UserAdminForm(forms.ModelForm):
 
         return self.cleaned_data["username"]
 
-    def clean_email(self: "UserAdminForm") -> Any:
+    def clean_email(self: "CustomUserCreationForm") -> Any:
         """Extra validation for email."""
         email = self.data.get("email")
 
-        local_part, domain = self.data.get("email")
-
+        local_part, domain = email.split("@")
         validate_confusables_email(
             local_part=local_part, domain=domain, exception_class=ValidationError
         )
 
-        validate_reserved_name(value=email, exception_class=ValidationError)
+        validate_reserved_name(value=local_part, exception_class=ValidationError)
 
         return self.cleaned_data["email"]
-
-
-class CustomUserCreationForm(UserCreationForm):
-    """Custom form for users creation form in admin page."""
-
-    class Meta:
-        """Meta data."""
-
-        model = CustomUser
-        fields = ("username", "password")
 
 
 class CustomUserChangeForm(UserChangeForm):
@@ -59,3 +53,27 @@ class CustomUserChangeForm(UserChangeForm):
 
         model = CustomUser
         fields = ("username", "email")
+
+    def clean_username(self: "CustomUserChangeForm") -> Any:
+        """Extra validation for username."""
+        username = self.data.get("username")
+
+        validate_confusables(value=username, exception_class=ValidationError)
+
+        validate_reserved_name(value=username, exception_class=ValidationError)
+
+        return self.cleaned_data["username"]
+
+    def clean_email(self: "CustomUserChangeForm") -> Any:
+        """Extra validation for email."""
+        email = self.data.get("email")
+
+        local_part, domain = email.split("@")
+
+        validate_confusables_email(
+            local_part=local_part, domain=domain, exception_class=ValidationError
+        )
+
+        validate_reserved_name(value=local_part, exception_class=ValidationError)
+
+        return self.cleaned_data["email"]

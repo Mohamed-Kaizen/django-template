@@ -19,8 +19,16 @@ git clone https://github.com/{{cookiecutter.github_username}}/{{cookiecutter.pro
 
 * install dependence:
 
-```shell tab="Poetry"
+```shell script
 poetry install
+
+```
+
+or
+
+```shell script
+pip install -r requirements.txt
+
 ```
 
 * serve the app:

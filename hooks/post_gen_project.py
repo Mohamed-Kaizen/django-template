@@ -14,13 +14,21 @@ DOCS_SOURCES = "docs_sources"
 ALL_TEMP_FOLDERS = [DOCS_SOURCES, "licenses"]
 
 DOCS_FILES_BY_TOOL = {
-    "mkdocs": ["index.md", "/mkdocs.yml"],
+    "mkdocs": [
+        "index.md",
+        "css",
+        "js",
+        "api",
+        "overrides",
+        "/mkdocs.yml"
+    ],
     "sphinx": [
         "conf.py",
         "index.rst",
         "make.bat",
         "Makefile",
     ],
+
 }
 
 
@@ -43,7 +51,6 @@ def create_git_repo() -> None:
 
     except Exception as error:
         print(error)
-        # logger.error(error)
 
 
 def create_env_file() -> None:
@@ -100,4 +107,3 @@ if __name__ == "__main__":
     remove_temp_folders(temp_folders=ALL_TEMP_FOLDERS)
     create_env_file()
     create_git_repo()
-    # logger.success("Happy Hack :)")

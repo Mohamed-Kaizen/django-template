@@ -2,10 +2,10 @@
 from typing import Any, Dict
 
 from django.conf import settings
-from rest_framework.request import Request
+from django.core.handlers.wsgi import WSGIRequest
 
 
-def from_settings(request: Request) -> Dict[str, Any]:
+def from_settings(request: WSGIRequest) -> Dict[str, Any]:
     """Custom template processor to show current env."""
     return {
         "ENVIRONMENT_NAME": settings.ENVIRONMENT_NAME,

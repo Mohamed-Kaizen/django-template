@@ -2,23 +2,9 @@
 from django.conf import settings
 from django.conf.urls.i18n import i18n_patterns
 from django.contrib import admin
-from django.urls import include, path, re_path
+from django.urls import include, path
 from django.views.generic import TemplateView
-from drf_yasg import openapi
-from drf_yasg.views import get_schema_view
-from rest_framework import permissions
 
-schema_view = get_schema_view(
-   openapi.Info(
-      title="{{cookiecutter.project_name}} API",
-      default_version='v1',
-      description="{{cookiecutter.description}}",
-      contact=openapi.Contact(email="{{cookiecutter.email}}"),
-      license=openapi.License(name="{{cookiecutter.license}} License"),
-   ),
-   public=False,
-   permission_classes=(permissions.AllowAny,),
-)
 
 urlpatterns = i18n_patterns(
     path(f"{settings.ADMIN_URL}/", admin.site.urls),
@@ -30,18 +16,6 @@ urlpatterns = i18n_patterns(
         "robots.txt",
         TemplateView.as_view(template_name="robots.txt", content_type="text/plain",),
     ),
-    path("api/users/", include("users.urls")),
-    re_path(
-        r"^docs(?P<format>\.json|\.yaml)$",
-        schema_view.without_ui(cache_timeout=0),
-        name="schema-json",
-    ),
-    path(
-        "docs/",
-        schema_view.with_ui("swagger", cache_timeout=0),
-        name="schema-swagger-ui",
-    ),
-    path("redoc/", schema_view.with_ui("redoc", cache_timeout=0), name="schema-redoc"),
     prefix_default_language=False
 )
 

@@ -22,8 +22,8 @@ def user_upload_to(instance: "CustomUser", filename: str) -> str:
 class CustomUser(AbstractUser):
     """Reference user model."""
 
-    uuid = models.UUIDField(
-        default=uuid.uuid4, editable=False, verbose_name=_("unique id")
+    id = models.UUIDField(
+        default=uuid.uuid4, editable=False, verbose_name=_("id"), primary_key=True
     )
 
     email = models.EmailField(verbose_name=_("email address"), unique=True)

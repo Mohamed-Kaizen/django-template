@@ -14,7 +14,7 @@ import inspect
 
 import django.apps
 import django.core.checks
-from django.db.models import FieldDoesNotExist
+from django.core.exceptions import FieldDoesNotExist
 
 
 def get_argument(node, arg):
