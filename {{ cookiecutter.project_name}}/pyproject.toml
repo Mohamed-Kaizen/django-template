@@ -11,7 +11,7 @@ repository = "https://github.com/{{ cookiecutter.github_username }}/{{ cookiecut
 keywords = ["{{ cookiecutter.project_slug }}"]
 
 [tool.poetry.dependencies]
-python = "{{cookiecutter.python_version}}"
+python = "^3.8"
 {% if cookiecutter.password_hashing_algorithm == 'Argon2' -%}argon2-cffi = "^20.1.0"{% elif cookiecutter.password_hashing_algorithm == 'bcrypt' -%}bcrypt = "^3.2.0"{%- endif %}
 better-exceptions = "^0.3"
 confusable_homoglyphs = "^3.2.0"
@@ -21,11 +21,9 @@ django-axes = "^5.14"
 django-filter = "^2.4"
 django-import-export = "2.5"
 django-storages = {extras = ["dropbox"], version = "^1.11"}
-django-zen-queries = "^2.0"
 gunicorn = "^20.1"
 Pillow = "^8.2"
 psycopg2-binary = "^2.8"
-pyinstrument = "^3.4"
 python-decouple = "^3.4"
 pwned-passwords-django = "^1.4"
 whitenoise = {extras = ["brotli"], version = "^5.2"}
@@ -45,8 +43,8 @@ flake8-docstrings = "^1.6"
 flake8-import-order = "^0.18"
 isort = "^5.8"
 mypy = "^0.812"
-{% if cookiecutter.docs_tool == 'mkdocs' -%}mkdocs = "^1.1"{% elif cookiecutter.docs_tool == 'sphinx' -%}Sphinx = "^3.5"{%- endif %}
-{% if cookiecutter.docs_tool == 'mkdocs' -%}mkdocs-material = "^7.1"{% elif cookiecutter.docs_tool == 'sphinx' -%}sphinx-rtd-theme = "^0.5"{%- endif %}
+{% if cookiecutter.docs_tool == 'mkdocs' -%}mkdocs = "^1.1"{%- endif %}
+{% if cookiecutter.docs_tool == 'mkdocs' -%}mkdocs-material = "^7.1"{%- endif %}
 {% if cookiecutter.docs_tool == 'mkdocs' -%}mkdocstrings = "^0.15"{%- endif %}
 {% if cookiecutter.docs_tool == 'mkdocs' -%}mkdocs-minify-plugin = "^0.4"{%- endif %}
 {% if cookiecutter.docs_tool == 'mkdocs' -%}mkdocs-git-revision-date-localized-plugin = "^0.9"{%- endif %}

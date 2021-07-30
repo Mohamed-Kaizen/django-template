@@ -6,7 +6,7 @@
   "author_name": "Mohamed Nesredin",
   "email": "{{ cookiecutter.author_name|lower|replace(' ', '-') }}@example.com",
   "github_username": "{{ cookiecutter.author_name|lower|replace(' ', '') }}",
-  "python_version": "3.8.3",
+  "python_version": "3.9.5",
   "domain_name": "example.com",
   "timezone": "Africa/Addis_Ababa",
   "password_hashing_algorithm": [
@@ -14,12 +14,37 @@
     "bcrypt",
     "PBKDF2"
   ],
+  "app_type": [
+    "plain django",
+    "django rest framework with dj-rest-auth",
+    "django rest framework with firebase auth",
+    "django-ninja",
+    "django-ninja with firebase auth",
+    "GraphQL with graphene",
+    "GraphQL with ariadne",
+    "GraphQL with strawberry"
+  ],
+  "background_task": [
+    "none",
+    "django-q"
+  ],
+  "production_storage": [
+    "filesystem",
+    "Amazon S3",
+    "Dropbox"
+  ],
   "docs_tool": [
     "mkdocs",
-    "sphinx",
     "none"
   ],
-
+  "text_editor": [
+    "pycharm",
+    "vscode"
+  ],
+  "deployment": [
+    "heroku",
+    "qovery"
+  ],
   "license": [
     "MIT",
     "BSD-3",
@@ -30,12 +55,6 @@
   ],
   "_copy_without_render": [
         "*.html",
-        "*.js",
-        "*.jsx",
-        "*.svelte",
-        "*.ts",
-        "*.tsx",
-        "*.vue"
+        "*.js"
   ]
-
 }

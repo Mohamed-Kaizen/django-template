@@ -41,7 +41,6 @@ create .env in the root of the project or set your ENV add the following line in
     DATABASE_URL=sqlite:///db.sqlite3
     EMAIL_USER=example@example.com
     EMAIL_PASSWORD=''
-    DROPBOX_OAUTH2_TOKEN=''
 
 
 ```shell tab="shell or CMD"
