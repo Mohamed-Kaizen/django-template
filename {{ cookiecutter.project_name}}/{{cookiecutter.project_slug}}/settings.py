@@ -48,7 +48,6 @@ DJANGO_APPS = [
 ]
 THIRD_PARTY_APPS = [
     "axes",
-    "import_export",
     "storages",
     "django_filters",
 ]
