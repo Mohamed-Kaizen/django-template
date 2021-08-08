@@ -26,13 +26,18 @@
   ],
   "background_task": [
     "none",
-    "django-q"
+    "django-q",
+    "celery"
   ],
   "production_storage": [
     "filesystem",
+    "MinIO",
     "Amazon S3",
     "Dropbox"
   ],
+  "use_django_dbbackup": "y",
+  "use_redis": "y",
+  "use_sentry": "y",
   "docs_tool": [
     "mkdocs",
     "none"

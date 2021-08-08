@@ -12,21 +12,35 @@ keywords = ["{{ cookiecutter.project_slug }}"]
 
 [tool.poetry.dependencies]
 python = "^3.8"
-{% if cookiecutter.password_hashing_algorithm == 'Argon2' -%}argon2-cffi = "^20.1.0"{% elif cookiecutter.password_hashing_algorithm == 'bcrypt' -%}bcrypt = "^3.2.0"{%- endif %}
 better-exceptions = "^0.3"
 confusable_homoglyphs = "^3.2.0"
 dj-database-url = "^0.5"
 django = "^3.2"
 django-axes = "^5.14"
 django-filter = "^2.4"
-django-import-export = "2.5"
-django-storages = {extras = ["dropbox"], version = "^1.11"}
 gunicorn = "^20.1"
 Pillow = "^8.2"
 psycopg2-binary = "^2.8"
 python-decouple = "^3.4"
 pwned-passwords-django = "^1.4"
 whitenoise = {extras = ["brotli"], version = "^5.2"}
+{% if cookiecutter.password_hashing_algorithm == 'Argon2' -%}argon2-cffi = "^20.1.0"{% elif cookiecutter.password_hashing_algorithm == 'bcrypt' -%}bcrypt = "^3.2.0"{%- endif %}
+{% if cookiecutter.production_storage == 'Dropbox' -%}django-storages = {extras = ["dropbox"], version = "^1.11"}{% elif cookiecutter.production_storage == 'Amazon S3' or cookiecutter.production_storage == 'MinIO' -%}django-storages = {extras = ["boto3"], version = "^1.11"}{%- endif %}
+{% if cookiecutter.use_sentry == 'y' -%}sentry-sdk = "^1.3"{%- endif %}
+{% if cookiecutter.use_django_dbbackup == 'y' -%}django-dbbackup = "^3.3"{%- endif %}
+{% if cookiecutter.use_redis == 'y' -%}redis = "^3.5"{%- endif %}
+{% if cookiecutter.app_type == 'django rest framework with dj-rest-auth' or cookiecutter.app_type == 'django rest framework with firebase auth'  -%}djangorestframework = "^3.12"{%- endif %}
+{% if cookiecutter.app_type == 'django rest framework with dj-rest-auth' or cookiecutter.app_type == 'django rest framework with firebase auth'  -%}drf-spectacular = "^0.17"{%- endif %}
+{% if cookiecutter.app_type == 'django rest framework with dj-rest-auth'  -%}dj-rest-auth = {extras = ["with_social"], version = "^2.1"}{%- endif %}
+{% if cookiecutter.app_type == 'django rest framework with dj-rest-auth'  -%}djangorestframework-simplejwt = "^4.7"{%- endif %}
+{% if cookiecutter.app_type == 'django rest framework with firebase auth' or cookiecutter.app_type == 'django-ninja with firebase auth'  -%}firebase-admin = "^5.0"{%- endif %}
+{% if cookiecutter.app_type == 'django-ninja' or cookiecutter.app_type == 'django-ninja with firebase auth'  -%}django-ninja = "^0.13"{%- endif %}
+{% if cookiecutter.app_type == 'GraphQL with graphene' -%}graphene-django = "^2.15"{%- endif %}
+{% if cookiecutter.app_type == 'GraphQL with graphene' -%}django-graphql-auth = "^0.3"{%- endif %}
+{% if cookiecutter.app_type == 'GraphQL with ariadne' -%}ariadne = "^0.13"{%- endif %}
+{% if cookiecutter.app_type == 'GraphQL with strawberry' -%}strawberry-graphql = "^0.70"{%- endif %}
+{% if cookiecutter.app_type != 'plain django' -%}django-cors-headers = "^3.7"{%- endif %}
+{% if cookiecutter.background_task == 'django-q' -%}django-q = "^1.3"{% elif cookiecutter.background_task == 'celery' -%}celery = "^5.1"{%- endif %}
 
 [tool.poetry.dev-dependencies]
 black = "^20.8b1"
@@ -43,18 +57,18 @@ flake8-docstrings = "^1.6"
 flake8-import-order = "^0.18"
 isort = "^5.8"
 mypy = "^0.812"
-{% if cookiecutter.docs_tool == 'mkdocs' -%}mkdocs = "^1.1"{%- endif %}
-{% if cookiecutter.docs_tool == 'mkdocs' -%}mkdocs-material = "^7.1"{%- endif %}
-{% if cookiecutter.docs_tool == 'mkdocs' -%}mkdocstrings = "^0.15"{%- endif %}
-{% if cookiecutter.docs_tool == 'mkdocs' -%}mkdocs-minify-plugin = "^0.4"{%- endif %}
-{% if cookiecutter.docs_tool == 'mkdocs' -%}mkdocs-git-revision-date-localized-plugin = "^0.9"{%- endif %}
-{% if cookiecutter.docs_tool == 'mkdocs' -%}mkdocs-git-authors-plugin = "^0.3"{%- endif %}
 pytest = "^6.2"
 pytest-cov = "^2.11"
 pytest-django = "^4.2"
 radon = "^4.5"
 safety = "^1.10"
 xdoctest = "^0.15"
+{% if cookiecutter.docs_tool == 'mkdocs' -%}mkdocs = "^1.1"{%- endif %}
+{% if cookiecutter.docs_tool == 'mkdocs' -%}mkdocs-material = "^7.1"{%- endif %}
+{% if cookiecutter.docs_tool == 'mkdocs' -%}mkdocstrings = "^0.15"{%- endif %}
+{% if cookiecutter.docs_tool == 'mkdocs' -%}mkdocs-minify-plugin = "^0.4"{%- endif %}
+{% if cookiecutter.docs_tool == 'mkdocs' -%}mkdocs-git-revision-date-localized-plugin = "^0.9"{%- endif %}
+{% if cookiecutter.docs_tool == 'mkdocs' -%}mkdocs-git-authors-plugin = "^0.3"{%- endif %}
 
 [tool.coverage.run]
 branch = true
