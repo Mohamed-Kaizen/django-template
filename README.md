@@ -17,11 +17,10 @@ TBD
   - Django Rest Framework:
     - with dj-rest-auth
       - add to the pyporject.toml. ✅
-      - setup to the settings.py.
-      - setup to the urls.py.
-      - setup to the views.py.
-      - setup to the serializers.py.
-      - create an adopter.py.
+      - setup to the settings.py. ✅
+      - setup to the urls.py. ✅
+      - setup to the serializers.py. ✅
+      - create an adopter.py. ✅
     - with firebase auth:
       - add to the pyporject.toml. ✅
       - setup to the settings.py.
@@ -30,10 +29,10 @@ TBD
       - setup to the serializers.py.
       - create an authentication.py.
     - add to the pyporject.toml. ✅
-    - setup to the settings.py.
+    - setup to the settings.py. ✅
     - add drf-spectacular pyporject.toml. ✅
-    - setup drf-spectacular to the settings.py.
-    - setup drf-spectacular to the urls.py with .env to disable the route if needed.
+    - setup drf-spectacular to the settings.py. ✅
+    - setup drf-spectacular to the urls.py with .env to disable the route if needed. ✅
   - Django-ninja:
     - with Jwt auth
     - with firebase auth

@@ -53,10 +53,22 @@ DJANGO_APPS = [
 ]
 THIRD_PARTY_APPS = [
     "axes",
-    {% if cookiecutter.production_storage != 'filesystem' -%}"storages",{%- endif %}
     "django_filters",
+    {% if cookiecutter.app_type != 'plain django' -%}"corsheaders",{%- endif %}
+    {% if cookiecutter.production_storage != 'filesystem' -%}"storages",{%- endif %}
     {% if cookiecutter.use_django_dbbackup == 'y' -%}"dbbackup",{%- endif %}
     {% if cookiecutter.background_task == 'django-q' -%}"django_q", {%- endif %}
+    {% if cookiecutter.app_type == 'django rest framework with dj-rest-auth' or cookiecutter.app_type == "django rest framework with firebase auth" -%}
+    "rest_framework",
+    "drf_spectacular",
+    {%- endif %}
+    {% if cookiecutter.app_type == 'django rest framework with dj-rest-auth' -%}
+    "allauth",
+    "allauth.account",
+    "allauth.socialaccount",
+    "dj_rest_auth.registration",
+    "dj_rest_auth",
+    {%- endif %}
 ]
 
 LOCAL_APPS = ["users.apps.UsersConfig"]
@@ -68,6 +80,7 @@ INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + LOCAL_APPS
 # ------------------------------------------------------------------------------
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
+    {% if cookiecutter.app_type != 'plain django' -%}"corsheaders.middleware.CorsMiddleware",  # django-cors-headers{%- endif %}
     "whitenoise.middleware.WhiteNoiseMiddleware",  # whitenoise
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.locale.LocaleMiddleware",
@@ -86,6 +99,7 @@ MIDDLEWARE = [
 AUTHENTICATION_BACKENDS = (
     "axes.backends.AxesBackend",
     "django.contrib.auth.backends.ModelBackend",
+    {% if cookiecutter.app_type == 'django rest framework with dj-rest-auth' -%}"allauth.account.auth_backends.AuthenticationBackend",{%- endif %}
 )
 
 # https://docs.djangoproject.com/en/dev/ref/settings/#auth-user-model
@@ -420,6 +434,60 @@ if not DEBUG:
     }
 {%- endif %}
 
+{%- endif %}
+
+{% if cookiecutter.app_type != 'plain django' -%}
+# django-cors-headers
+# ------------------------------------------------------------------------------
+# https://github.com/adamchainz/django-cors-headers#cors_allow_all_origins
+CORS_ALLOW_ALL_ORIGINS = DEBUG
+if not DEBUG:
+    CORS_ALLOWED_ORIGINS = config("CORS_ALLOWED_ORIGINS", cast=Csv(str))
+{%- endif %}
+
+{% if cookiecutter.app_type == 'django rest framework with dj-rest-auth' or cookiecutter.app_type == "django rest framework with firebase auth" -%}
+# djangorestframework
+# ------------------------------------------------------------------------------
+REST_FRAMEWORK = {
+    "DEFAULT_AUTHENTICATION_CLASSES": (
+        "rest_framework.authentication.SessionAuthentication",
+        {% if cookiecutter.app_type == 'django rest framework with dj-rest-auth' -%}"dj_rest_auth.jwt_auth.JWTCookieAuthentication",{%- endif %}
+    ),
+    "DEFAULT_PERMISSION_CLASSES": ("rest_framework.permissions.AllowAny",),
+    "DEFAULT_PAGINATION_CLASS": "rest_framework.pagination.PageNumberPagination",
+    "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
+}
+{%- endif %}
+
+{% if cookiecutter.app_type == 'django rest framework with dj-rest-auth' -%}
+# djangorestframework-simplejwt
+# ------------------------------------------------------------------------------
+SIMPLE_JWT = {
+    "USER_ID_FIELD": "id",
+}
+
+# dj-rest-auth
+# ------------------------------------------------------------------------------
+REST_USE_JWT = True
+JWT_AUTH_COOKIE = 'jwt-auth'
+
+ACCOUNT_AUTHENTICATION_METHOD = "username_email"
+
+ACCOUNT_EMAIL_REQUIRED = True
+
+REST_AUTH_SERIALIZERS = {
+    "USER_DETAILS_SERIALIZER": "users.serializers.UserDetailsSerializer",
+    "JWT_SERIALIZER": "users.serializers.JWTSerializer",
+}
+
+REST_AUTH_REGISTER_SERIALIZERS = {
+    "REGISTER_SERIALIZER": "users.serializers.CustomRegisterSerializer",
+}
+ACCOUNT_ADAPTER = "users.adapter.CustomAccountAdapter"
+
+OLD_PASSWORD_FIELD_ENABLED = True
+
+LOGOUT_ON_PASSWORD_CHANGE = True
 {%- endif %}
 
 # Your settings...

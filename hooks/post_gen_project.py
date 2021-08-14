@@ -103,6 +103,19 @@ def remove_temp_files_folders(*, temp_folders: List[str], files) -> None:
     for file in files:
         os.remove(file)
 
+
+def drf_check() -> None:
+    """List of check to make sure if drf are been used."""
+    if "{{cookiecutter.app_type}}" != "django rest framework with dj-rest-auth":
+        ALL_TEMP_Files.append("users/adapter.py")
+
+    if "{{cookiecutter.app_type}}" not in [
+        "django rest framework with dj-rest-auth",
+        "django rest framework with firebase auth",
+    ]:
+        ALL_TEMP_Files.append("users/serializers.py")
+
+
 if __name__ == "__main__":
     move_docs_files(
         docs_tool="{{cookiecutter.docs_tool}}",
@@ -116,6 +129,7 @@ if __name__ == "__main__":
     if "{{cookiecutter.deployment}}" != "heroku":
         ALL_TEMP_Files.append("Procfile")
 
+    drf_check()
     remove_temp_files_folders(temp_folders=ALL_TEMP_FOLDERS, files=ALL_TEMP_Files)
     create_env_file()
     create_git_repo()
