@@ -2,9 +2,14 @@
 import pathlib
 from datetime import timedelta
 
+from better_exceptions.integrations.django import skip_errors_filter
 from decouple import Csv, config
 from dj_database_url import parse as db_url
 from django.utils.translation import gettext_lazy as _
+{% if cookiecutter.use_sentry == 'y' -%}
+import sentry_sdk
+from sentry_sdk.integrations.django import DjangoIntegration
+{%- endif %}
 
 # General
 # ------------------------------------------------------------------------------
@@ -15,7 +20,7 @@ TEMPLATES_DIR = [BASE_DIR.joinpath("templates")]
 # https://docs.djangoproject.com/en/dev/ref/settings/#debug
 DEBUG = config("DEBUG", cast=bool)
 
-ADMIN_URL = config("ADMIN_URL", cast=str, default="admin")
+ADMIN_URL = config("ADMIN_URL", cast=str, default="admin/")
 
 # using python-decouple to hide the SECRET_KEY
 SECRET_KEY = config("SECRET_KEY")
@@ -48,8 +53,10 @@ DJANGO_APPS = [
 ]
 THIRD_PARTY_APPS = [
     "axes",
-    "storages",
+    {% if cookiecutter.production_storage != 'filesystem' -%}"storages",{%- endif %}
     "django_filters",
+    {% if cookiecutter.use_django_dbbackup == 'y' -%}"dbbackup",{%- endif %}
+    {% if cookiecutter.background_task == 'django-q' -%}"django_q", {%- endif %}
 ]
 
 LOCAL_APPS = ["users.apps.UsersConfig"]
@@ -69,6 +76,7 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
+    "better_exceptions.integrations.django.BetterExceptionsMiddleware",
     "axes.middleware.AxesMiddleware",  # django-axes
 ]
 
@@ -250,6 +258,49 @@ DATABASES = {
     "default": config("DATABASE_URL", cast=db_url, default="sqlite:///db.sqlite3")
 }
 
+# LOGGING
+# ------------------------------------------------------------------------------
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    "formatters": {"rich": {"datefmt": "[%B %d, %X, %Y]"}},
+    'filters': {
+        'skip_errors': {
+            '()': 'django.utils.log.CallbackFilter',
+            'callback': skip_errors_filter,
+        }
+    },
+    'handlers': {
+        'console': {
+            'level': 'INFO',
+            'filters': ['skip_errors'],
+            "class": "rich.logging.RichHandler",
+            "formatter": "rich",
+        }
+    },
+    'loggers': {
+        'django': {
+            'handlers': [
+                'console',
+            ],
+        }
+    }
+}
+
+{% if cookiecutter.use_redis == 'y' -%}
+# CACHES
+# ------------------------------------------------------------------------------
+CACHES = {
+    "default": {
+        "BACKEND": "django_redis.cache.RedisCache",
+        "LOCATION": config("REDIS_URL", cast=str),
+        "OPTIONS": {
+            "CLIENT_CLASS": "django_redis.client.DefaultClient",
+        }
+    }
+}
+{%- endif %}
+
 # Third-Party Settings
 # whitenoise
 # ------------------------------------------------------------------------------
@@ -293,14 +344,83 @@ AXES_COOLOFF_TIME = timedelta(minutes=60) if not DEBUG else timedelta(minutes=5)
 AXES_FAILURE_LIMIT = 5
 AXES_USE_USER_AGENT = True
 
+{% if cookiecutter.production_storage != 'filesystem' -%}
 # django-storages
 # ------------------------------------------------------------------------------
 if not DEBUG:
+    {% if cookiecutter.production_storage == 'Dropbox' -%}
     DEFAULT_FILE_STORAGE = "storages.backends.dropbox.DropBoxStorage"
 
     DROPBOX_OAUTH2_TOKEN = config("DROPBOX_OAUTH2_TOKEN", cast=str)
 
     DROPBOX_ROOT_PATH = "media"
+
+    {% else -%}
+    DEFAULT_FILE_STORAGE = "storages.backends.s3boto3.S3Boto3Storage"
+
+    AWS_ACCESS_KEY_ID = config("AWS_ACCESS_KEY_ID", cast=str)
+
+    AWS_SECRET_ACCESS_KEY = config("AWS_SECRET_ACCESS_KEY", cast=str)
+
+    AWS_STORAGE_BUCKET_NAME = config("AWS_STORAGE_BUCKET_NAME", cast=str, default="media")
+
+    {% if cookiecutter.production_storage == 'MinIO' -%}AWS_S3_ENDPOINT_URL = config("MinIO_URL", cast=str){%- endif %}
+
+    {%- endif %}
+
+{%- endif %}
+
+
+{% if cookiecutter.use_sentry == 'y' -%}
+# sentry
+# ------------------------------------------------------------------------------
+sentry_sdk.init(
+    dsn=config("SENTRY_DSN", cast=str),
+    integrations=[DjangoIntegration()],
+    traces_sample_rate=1.0,
+    send_default_pii=True,
+)
+{%- endif %}
+
+{% if cookiecutter.background_task == 'django-q' -%}
+# django-q
+# ------------------------------------------------------------------------------
+Q_CLUSTER = {
+    'name': '{{cookiecutter.project_slug}}',
+    'workers': 4,
+    'retry': 5,
+    'timeout': 4,
+    {% if cookiecutter.use_redis == 'y' -%}'django_redis': 'default'{%- endif %}
+}
+{%- endif %}
+
+{% if cookiecutter.use_django_dbbackup == 'y' -%}
+# django-dbbackup
+# ------------------------------------------------------------------------------
+{% if cookiecutter.production_storage == 'filesystem' -%}
+DBBACKUP_STORAGE = 'django.core.files.storage.FileSystemStorage'
+DBBACKUP_STORAGE_OPTIONS = {'location': '/my/backup/dir/'}
+{% elif cookiecutter.production_storage == 'Dropbox' -%}
+if not DEBUG:
+    DBBACKUP_STORAGE = 'storages.backends.dropbox.DropBoxStorage'
+    DBBACKUP_STORAGE_OPTIONS = {
+        'oauth2_access_token': DROPBOX_OAUTH2_TOKEN,
+        "root_path": DROPBOX_ROOT_PATH
+    }
+{% else -%}
+if not DEBUG:
+    DBBACKUP_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
+    DBBACKUP_STORAGE_OPTIONS = {
+        'access_key': AWS_ACCESS_KEY_ID,
+        'secret_key': AWS_SECRET_ACCESS_KEY,
+        'bucket_name': AWS_STORAGE_BUCKET_NAME,
+        'default_acl': 'private',
+       "location": "backups",
+        {% if cookiecutter.production_storage == 'MinIO' -%}"endpoint_url": AWS_S3_ENDPOINT_URL{%- endif %}
+    }
+{%- endif %}
+
+{%- endif %}
 
 # Your settings...
 # ------------------------------------------------------------------------------

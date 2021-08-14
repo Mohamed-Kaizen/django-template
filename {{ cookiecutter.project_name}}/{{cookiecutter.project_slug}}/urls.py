@@ -7,7 +7,7 @@ from django.views.generic import TemplateView
 
 
 urlpatterns = i18n_patterns(
-    path(f"{settings.ADMIN_URL}/", admin.site.urls),
+    path(f"{settings.ADMIN_URL}", admin.site.urls),
     path(
         ".well-known/security.txt",
         TemplateView.as_view(template_name="security.txt", content_type="text/plain",),

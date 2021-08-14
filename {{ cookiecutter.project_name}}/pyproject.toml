@@ -23,12 +23,13 @@ Pillow = "^8.2"
 psycopg2-binary = "^2.8"
 python-decouple = "^3.4"
 pwned-passwords-django = "^1.4"
+rich = "^10.7"
 whitenoise = {extras = ["brotli"], version = "^5.2"}
 {% if cookiecutter.password_hashing_algorithm == 'Argon2' -%}argon2-cffi = "^20.1.0"{% elif cookiecutter.password_hashing_algorithm == 'bcrypt' -%}bcrypt = "^3.2.0"{%- endif %}
 {% if cookiecutter.production_storage == 'Dropbox' -%}django-storages = {extras = ["dropbox"], version = "^1.11"}{% elif cookiecutter.production_storage == 'Amazon S3' or cookiecutter.production_storage == 'MinIO' -%}django-storages = {extras = ["boto3"], version = "^1.11"}{%- endif %}
 {% if cookiecutter.use_sentry == 'y' -%}sentry-sdk = "^1.3"{%- endif %}
 {% if cookiecutter.use_django_dbbackup == 'y' -%}django-dbbackup = "^3.3"{%- endif %}
-{% if cookiecutter.use_redis == 'y' -%}redis = "^3.5"{%- endif %}
+{% if cookiecutter.use_redis == 'y' -%}django-redis = "^5.0"{%- endif %}
 {% if cookiecutter.app_type == 'django rest framework with dj-rest-auth' or cookiecutter.app_type == 'django rest framework with firebase auth'  -%}djangorestframework = "^3.12"{%- endif %}
 {% if cookiecutter.app_type == 'django rest framework with dj-rest-auth' or cookiecutter.app_type == 'django rest framework with firebase auth'  -%}drf-spectacular = "^0.17"{%- endif %}
 {% if cookiecutter.app_type == 'django rest framework with dj-rest-auth'  -%}dj-rest-auth = {extras = ["with_social"], version = "^2.1"}{%- endif %}

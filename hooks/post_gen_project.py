@@ -53,7 +53,22 @@ ALLOWED_HOSTS={{cookiecutter.domain_name}}, localhost, 0.0.0.0, 127.0.0.1
 DATABASE_URL=sqlite:///db.sqlite3
 EMAIL_USER={{cookiecutter.email}}
 EMAIL_PASSWORD=''
-    """
+"""
+    if "{{cookiecutter.use_sentry}}" == "y":
+        env_file = env_file + "SENTRY_DSN=''\n"
+
+    if "{{cookiecutter.use_redis}}" == "y":
+        env_file = env_file + "REDIS_URL=''\n"
+
+    if "{{cookiecutter.production_storage}}" == "Dropbox":
+        env_file = env_file + "DROPBOX_OAUTH2_TOKEN=''\n"
+
+    if "{{cookiecutter.production_storage}}" in ["MinIO", "Amazon S3"]:
+        env_file = env_file + "AWS_ACCESS_KEY_ID=''\nAWS_SECRET_ACCESS_KEY=''\n"
+
+    if "{{cookiecutter.production_storage}}" == "MinIO":
+        env_file = env_file + "MinIO_URL=''"
+
     with open(".env", "w") as file:
         file.write(env_file)
 
@@ -95,7 +110,7 @@ if __name__ == "__main__":
         docs_sources=DOCS_SOURCES,
     )
 
-    if "{{cookiecutter.text_editor}}" != "vscode":
+    if "{{cookiecutter.text_editor}}" != "vscode" and "{{cookiecutter.text_editor}}" != "both":
         ALL_TEMP_FOLDERS.append(".vscode")
 
     if "{{cookiecutter.deployment}}" != "heroku":

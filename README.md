@@ -51,7 +51,7 @@ TBD
 - Selecting a background task from the following options:
   - Django-q:
     - add to the pyporject.toml. ✅
-    - setup to the settings.py.
+    - setup to the settings.py. ✅
   - Celery:
     - add to the pyporject.toml. ✅
     - setup to the settings.py.
@@ -59,29 +59,34 @@ TBD
   - filesystem. ✅
   - MinIO:
     - add to the pyporject.toml. ✅
-    - setup to the settings.py.
+    - setup to the settings.py. ✅
+    - setup to the post_gen_project.py. ✅
   - Amazon S3:
     - add to the pyporject.toml. ✅
-    - setup to the settings.py.
+    - setup to the settings.py. ✅
+    - setup to the post_gen_project.py. ✅
   - Dropbox:
     - add to the pyporject.toml. ✅
     - setup to the settings.py. ✅
+    - setup to the post_gen_project.py. ✅
 - Enable django-dbbackup for backup (Optional):
   - add to the pyporject.toml. ✅
-  - setup to the settings.py.
+  - setup to the settings.py. ✅
 - Enable redis (Optional):
   - add to the pyporject.toml. ✅
-  - setup to the settings.py.
+  - setup to the settings.py. ✅
+  - setup to the post_gen_project.py. ✅
 - Enable sentry (Optional):
   - add to the pyporject.toml. ✅
-  - setup to the settings.py.
+  - setup to the settings.py. ✅
+  - setup to the post_gen_project.py. ✅
 - Enable mkdocs (Optional):
   - add to the pyporject.toml. ✅
 - Selecting from `pycharm` or `vscode`:
-  - pycharm:
-    - create configuration folder.
+  - pycharm. ✅
   - vscode:
     - create configuration folder. ✅
+    - setup to the post_gen_project.py. ✅
 - Selecting a platform for deployment from the following options:
   - heroku:
     - create Procfile. ✅
