@@ -26,6 +26,8 @@ class CustomUser(AbstractUser):
         default=uuid.uuid4, editable=False, verbose_name=_("id"), primary_key=True
     )
 
+    {% if cookiecutter.app_type == 'django rest framework with firebase auth' -%}firebase_user_id = models.CharField(max_length=200, null=True, blank=True){%- endif %}
+
     email = models.EmailField(verbose_name=_("email address"), unique=True)
 
     full_name = models.CharField(verbose_name=_("full name"), max_length=300)

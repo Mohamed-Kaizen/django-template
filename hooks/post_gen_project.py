@@ -69,6 +69,12 @@ EMAIL_PASSWORD=''
     if "{{cookiecutter.production_storage}}" == "MinIO":
         env_file = env_file + "MinIO_URL=''"
 
+    if "{{cookiecutter.app_type}}" != "plain django":
+        env_file = env_file + "CORS_ALLOWED_ORIGINS=''\n"
+
+    if "{{cookiecutter.app_type}}" == "django rest framework with firebase auth":
+        env_file = env_file + "FIREBASE_PROJECT_ID=''\nFIREBASE_PRIVATE_KEY_ID=''\nFIREBASE_PRIVATE_KEY=''\nFIREBASE_CLIENT_EMAIL=''\nFIREBASE_CLIENT_ID=''\nFIREBASE_CLIENT_X509_CERT_URL=''"
+
     with open(".env", "w") as file:
         file.write(env_file)
 
@@ -108,6 +114,9 @@ def drf_check() -> None:
     """List of check to make sure if drf are been used."""
     if "{{cookiecutter.app_type}}" != "django rest framework with dj-rest-auth":
         ALL_TEMP_Files.append("users/adapter.py")
+
+    if "{{cookiecutter.app_type}}" != "django rest framework with firebase auth":
+        ALL_TEMP_Files.append("users/authentication.py")
 
     if "{{cookiecutter.app_type}}" not in [
         "django rest framework with dj-rest-auth",

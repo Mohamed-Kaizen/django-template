@@ -1,10 +1,10 @@
 """Collection serializers."""
 from typing import Any, Dict
 
-from dj_rest_auth.registration.serializers import RegisterSerializer
+{% if cookiecutter.app_type == 'django rest framework with dj-rest-auth' -%}from dj_rest_auth.registration.serializers import RegisterSerializer{%- endif %}
 from rest_framework import serializers
 
-
+{% if cookiecutter.app_type == 'django rest framework with dj-rest-auth' -%}
 class UserDetailsSerializer(serializers.Serializer):
     """User detail serializer."""
 
@@ -43,3 +43,9 @@ class CustomRegisterSerializer(RegisterSerializer):
         data_dict["full_name"] = self.validated_data.get("full_name", "")
 
         return data_dict
+{%- endif %}
+
+{% if cookiecutter.app_type == 'django rest framework with firebase auth' -%}
+class FireBaseAuthSerializer(serializers.Serializer):
+    token = serializers.CharField()
+{%- endif %}

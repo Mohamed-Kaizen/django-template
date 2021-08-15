@@ -23,11 +23,11 @@ TBD
       - create an adopter.py. ✅
     - with firebase auth:
       - add to the pyporject.toml. ✅
-      - setup to the settings.py.
-      - setup to the urls.py.
-      - setup to the views.py.
-      - setup to the serializers.py.
-      - create an authentication.py.
+      - setup to the settings.py. ✅
+      - setup to the urls.py. ✅
+      - setup to the views.py. ✅
+      - setup to the serializers.py. ✅
+      - create an authentication.py. ✅
     - add to the pyporject.toml. ✅
     - setup to the settings.py. ✅
     - add drf-spectacular pyporject.toml. ✅

@@ -11,6 +11,12 @@ import sentry_sdk
 from sentry_sdk.integrations.django import DjangoIntegration
 {%- endif %}
 
+{% if cookiecutter.app_type == 'django rest framework with firebase auth' -%}
+import firebase_admin
+
+from firebase_admin import credentials
+{%- endif %}
+
 # General
 # ------------------------------------------------------------------------------
 BASE_DIR = pathlib.Path().absolute()
@@ -451,7 +457,7 @@ if not DEBUG:
 REST_FRAMEWORK = {
     "DEFAULT_AUTHENTICATION_CLASSES": (
         "rest_framework.authentication.SessionAuthentication",
-        {% if cookiecutter.app_type == 'django rest framework with dj-rest-auth' -%}"dj_rest_auth.jwt_auth.JWTCookieAuthentication",{%- endif %}
+        {% if cookiecutter.app_type == 'django rest framework with dj-rest-auth' -%}"dj_rest_auth.jwt_auth.JWTCookieAuthentication",{% elif cookiecutter.app_type == 'django rest framework with firebase auth' -%}"users.authentication.FireBaseAuth",{%- endif %}
     ),
     "DEFAULT_PERMISSION_CLASSES": ("rest_framework.permissions.AllowAny",),
     "DEFAULT_PAGINATION_CLASS": "rest_framework.pagination.PageNumberPagination",
@@ -488,6 +494,27 @@ ACCOUNT_ADAPTER = "users.adapter.CustomAccountAdapter"
 OLD_PASSWORD_FIELD_ENABLED = True
 
 LOGOUT_ON_PASSWORD_CHANGE = True
+{%- endif %}
+
+{% if cookiecutter.app_type == 'django rest framework with firebase auth' -%}
+# Firebase
+# ------------------------------------------------------------------------------
+cred = credentials.Certificate(
+    {
+        "type": "service_account",
+        "project_id": config("FIREBASE_PROJECT_ID", cast=str),
+        "private_key_id": config("FIREBASE_PRIVATE_KEY_ID", cast=str),
+        "private_key": config("FIREBASE_PRIVATE_KEY", cast=str),
+        "client_email": config("FIREBASE_CLIENT_EMAIL", cast=str),
+        "client_id": config("FIREBASE_CLIENT_ID", cast=str),
+        "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+        "token_uri": "https://accounts.google.com/o/oauth2/token",
+        "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+        "client_x509_cert_url": config("FIREBASE_CLIENT_X509_CERT_URL", cast=str),
+    }
+)
+
+FIREBASE_APP = firebase_admin.initialize_app(cred)
 {%- endif %}
 
 # Your settings...
